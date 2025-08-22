@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #6dd5ed, #2193b0);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .quiz-container {
+      background: rgba(0,0,0,0.6);
+      padding: 30px;
+      border-radius: 15px;
+      width: 400px;
+      text-align: center;
+      box-shadow: 0px 8px 20px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .question {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .options button {
+      display: block;
+      background: #fff;
+      color: #333;
+      border: none;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .options button:hover {
+      background: #ddd;
+    }
+
+    #next-btn {
+      background: #ff9800;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: none;
+    }
+
+    #score {
+      font-size: 20px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Quiz Game</h1>
+    <div class="question" id="question">Question text</div>
+    <div class="options" id="options"></div>
+    <button id="next-btn">Next</button>
+    <div id="score"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What is the capital of India?",
+        options: ["Delhi", "Mumbai", "Kolkata", "Chennai"],
+        answer: "Delhi"
+      },
+      {
+        question: "Which is the largest planet in our Solar System?",
+        options: ["Earth", "Jupiter", "Saturn", "Mars"],
+        answer: "Jupiter"
+      },
+      {
+        question: "Who developed the theory of relativity?",
+        options: ["Newton", "Einstein", "Tesla", "Galileo"],
+        answer: "Einstein"
+      },
+      {
+        question: "HTML stands for?",
+        options: ["Hyper Trainer Marking Language", "Hyper Text Markup Language", "High Text Markup Language", "Hyperlinks Text Mark Language"],
+        answer: "Hyper Text Markup Language"
+      }
+    ];
+
+    const questionElement = document.getElementById("question");
+    const optionsElement = document.getElementById("options");
+    const nextButton = document.getElementById("next-btn");
+    const scoreElement = document.getElementById("score");
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      scoreElement.innerHTML = "";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = questions[currentQuestionIndex];
+      questionElement.innerHTML = currentQuestion.question;
+
+      currentQuestion.options.forEach(option => {
+        const button = document.createElement("button");
+        button.innerHTML = option;
+        button.addEventListener("click", () => selectAnswer(button, currentQuestion.answer));
+        optionsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      optionsElement.innerHTML = "";
+      nextButton.style.display = "none";
+    }
+
+    function selectAnswer(button, correctAnswer) {
+      const isCorrect = button.innerHTML === correctAnswer;
+      if (isCorrect) {
+        button.style.backgroundColor = "green";
+        score++;
+      } else {
+        button.style.backgroundColor = "red";
+      }
+      Array.from(optionsElement.children).forEach(btn => {
+        btn.disabled = true;
+        if (btn.innerHTML === correctAnswer) {
+          btn.style.backgroundColor = "green";
+        }
+      });
+      nextButton.style.display = "block";
+    }
+
+    nextButton.addEventListener("click", () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        showQuestion();
+      } else {
+        showScore();
+      }
+    });
+
+    function showScore() {
+      resetState();
+      questionElement.innerHTML = "Quiz Completed!";
+      scoreElement.innerHTML = `Your Score: ${score} / ${questions.length}`;
+      nextButton.innerHTML = "Play Again";
+      nextButton.style.display = "block";
+      nextButton.addEventListener("click", startQuiz);
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
